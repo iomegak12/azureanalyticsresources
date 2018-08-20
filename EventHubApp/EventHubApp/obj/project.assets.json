@@ -5187,11 +5187,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\MyData\\Practices\\eh\\EventHubApp\\EventHubApp\\EventHubApp.csproj",
+      "projectUniqueName": "C:\\000 - Azure Data Analytics\\Demonstrations\\EventHubApp\\EventHubApp\\EventHubApp.csproj",
       "projectName": "EventHubApp",
-      "projectPath": "C:\\MyData\\Practices\\eh\\EventHubApp\\EventHubApp\\EventHubApp.csproj",
+      "projectPath": "C:\\000 - Azure Data Analytics\\Demonstrations\\EventHubApp\\EventHubApp\\EventHubApp.csproj",
       "packagesPath": "C:\\Users\\iomeg\\.nuget\\packages\\",
-      "outputPath": "C:\\MyData\\Practices\\eh\\EventHubApp\\EventHubApp\\obj\\",
+      "outputPath": "C:\\000 - Azure Data Analytics\\Demonstrations\\EventHubApp\\EventHubApp\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

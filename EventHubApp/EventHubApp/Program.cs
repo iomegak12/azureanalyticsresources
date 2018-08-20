@@ -29,8 +29,8 @@ namespace IntSol.Training.Applications
 
         public static void Main(string[] args)
         {
-            var connectionString = @"Endpoint=sb://iomegaevents.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=InC+Qqs10QtuIojBZfoIklOK4wLNU3wCTIezcfhweek=";
-            var eventHubPath = "sensor-data";
+            var connectionString = @"Endpoint=sb://iomegaehnamespace.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=cCOcy8SlbkPAY0S0BDifYsv/Y1uGycJpmVa7nhr2Dws=";
+            var eventHubPath = "iomegasensormessages";
 
             try
             {
@@ -41,18 +41,19 @@ namespace IntSol.Training.Applications
                 var eventHubClient = EventHubClient.CreateFromConnectionString(eventHubConnectionStringBuilder.ToString());
                 var registeredLocations = new string[] { "Bangalore", "Hyderabad", "Chennai", "Madurai", "Trivandrum" };
                 var random = new Random();
-                var counter = 1;
                 var lastTemperature = random.Next(20, 30);
 
                 Parallel.ForEach<string>(registeredLocations,
                     location =>
                     {
+                        var counter = 1;
+
                         while (true)
                         {
                             if (counter >= MAX_LIMIT)
                                 break;
 
-                            if (counter % 2 == 0)
+                            if (counter % 100 == 0)
                             {
                                 Thread.Sleep(random.Next(2000, 5000));
 

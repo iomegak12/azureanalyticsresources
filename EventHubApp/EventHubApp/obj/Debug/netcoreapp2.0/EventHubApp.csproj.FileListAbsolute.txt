@@ -19,3 +19,13 @@ C:\MyData\Practices\eh\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubA
 C:\MyData\Practices\eh\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.AssemblyInfo.cs
 C:\MyData\Practices\eh\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.dll
 C:\MyData\Practices\eh\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.pdb
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\bin\Debug\netcoreapp2.0\EventHubApp.deps.json
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\bin\Debug\netcoreapp2.0\EventHubApp.runtimeconfig.json
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\bin\Debug\netcoreapp2.0\EventHubApp.runtimeconfig.dev.json
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\bin\Debug\netcoreapp2.0\EventHubApp.dll
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\bin\Debug\netcoreapp2.0\EventHubApp.pdb
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.csproj.CoreCompileInputs.cache
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.AssemblyInfoInputs.cache
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.AssemblyInfo.cs
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.dll
+C:\000 - Azure Data Analytics\Demonstrations\EventHubApp\EventHubApp\obj\Debug\netcoreapp2.0\EventHubApp.pdb

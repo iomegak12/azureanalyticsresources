@@ -1,0 +1,16 @@
+[
+{
+	"SensorId":1,
+	"Location":"Hyderabad",
+	"Temperature": 26,
+	"Humidity":70,
+	"RecordedTime":"2012-04-23T18:25:43.511Z"
+},
+{
+	"SensorId":2,
+	"Location":"Bangalore",
+	"Temperature": 23,
+	"Humidity": 77,
+	"RecordedTime":"2012-04-23T18:25:43.511Z"
+}
+]
