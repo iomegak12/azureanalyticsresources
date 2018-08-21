@@ -1,0 +1,68 @@
+create table people
+(
+    PersonID int,
+    Name varchar(255),
+    LastModifytime datetime
+);
+GO
+
+INSERT INTO people
+(PersonID, Name, LastModifytime)
+VALUES
+(1, 'rajkumar','9/1/2017 12:56:00 AM'),
+(2, 'rahim','9/2/2017 5:23:00 AM'),
+(3, 'robert','9/3/2017 2:36:00 AM'),
+(4, 'rashid','9/4/2017 3:21:00 AM'),
+(5, 'mekha','9/5/2017 8:06:00 AM');
+GO
+
+create table watermarktable
+(
+
+TableName varchar(255),
+WatermarkValue datetime,
+);
+GO
+
+INSERT INTO watermarktable
+VALUES ('people','1/1/2010 12:00:00 AM')    
+GO
+
+Select * from watermarktable
+GO
+
+CREATE PROCEDURE sp_write_watermark @LastModifiedtime datetime, @TableName varchar(50)
+AS
+
+BEGIN
+
+    UPDATE watermarktable
+    SET [WatermarkValue] = @LastModifiedtime 
+WHERE [TableName] = @TableName
+
+END
+GO
+
+Reference Query:
+select MAX(LastModifytime) as NewWatermarkvalue from people
+
+Reference Query 2:
+select * from data_source_table 
+where LastModifytime > '@{activity('LookupOldWaterMarkActivity').output.firstRow.WatermarkValue}' 
+	and 
+LastModifytime <= '@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}'
+
+@CONCAT('Incremental-', pipeline().RunId, '.txt')
+
+SP Parameters:
+
+@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}
+@{activity('LookupOldWaterMarkActivity').output.firstRow.TableName}
+
+
+
+INSERT INTO people
+VALUES (6, 'newdata','9/6/2017 2:23:00 AM')
+
+INSERT INTO people
+VALUES (7, 'newdata','9/7/2017 9:01:00 AM')
