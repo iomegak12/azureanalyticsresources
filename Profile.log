@@ -1,0 +1,7 @@
+ProfileId,SessionStart,Duration,SrcIPAddress,GameType
+11,2040,30,192.168.10.10,Action
+21,2041,30,192.168.11.10,Action
+31,2042,30,192.168.12.10,Action
+41,2043,30,192.168.13.10,Action
+51,2044,30,192.168.14.10,Action
+61,2045,30,192.168.15.10,Action
