@@ -1,0 +1,3 @@
+AdlCopy /source https://mydatastore.blob.core.windows.net/mysparkcluster/HdiSamples/HdiSamples/SensorSampleData/hvac/HVAC.csv
+		/dest swebhdfs://mydatalakestore.azuredatalakestore.net/hvac/ 
+		/sourcekey uJUfvD6cEvhfLoBae2yyQf8t9/BpbWZ4XoYj4kAS5Jf40pZaMNf0q6a8yqTxktwVgRED4vPHeh/50iS9atS5LQ==

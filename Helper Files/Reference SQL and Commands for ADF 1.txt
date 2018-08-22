@@ -47,17 +47,17 @@ Reference Query:
 select MAX(LastModifytime) as NewWatermarkvalue from people
 
 Reference Query 2:
-select * from data_source_table 
-where LastModifytime > '@{activity('LookupOldWaterMarkActivity').output.firstRow.WatermarkValue}' 
+select * from people 
+where LastModifytime > '@{activity('LookupLastUpdateWatermark').output.firstRow.WatermarkValue}' 
 	and 
-LastModifytime <= '@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}'
+LastModifytime <= '@{activity('LookupMaxTimeFromPeopleDataset').output.firstRow.NewWatermarkvalue}'
 
 @CONCAT('Incremental-', pipeline().RunId, '.txt')
 
 SP Parameters:
 
-@{activity('LookupNewWaterMarkActivity').output.firstRow.NewWatermarkvalue}
-@{activity('LookupOldWaterMarkActivity').output.firstRow.TableName}
+@{activity('LookupMaxTimeFromPeopleDataset').output.firstRow.NewWatermarkvalue}
+@{activity('LookupLastUpdateWatermark').output.firstRow.TableName}
 
 
 

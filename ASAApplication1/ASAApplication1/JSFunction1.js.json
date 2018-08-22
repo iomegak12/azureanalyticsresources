@@ -1,0 +1,17 @@
+﻿{
+  "JSCode": "function predictWeight(height, weight) {\r\n    return {\r\n        output: {\r\n            results: [\r\n                {\r\n                    scoredLabel: 67.8\r\n                }\r\n            ]\r\n        }\r\n    };\r\n}",
+  "Name": "predictWeight",
+  "OutputType": "any",
+  "Type": "Scalar",
+  "FunctionInputs": [
+    {
+      "DataType": "any",
+      "IsConfigurationParameter": null
+    },
+    {
+      "DataType": "any",
+      "IsConfigurationParameter": null
+    }
+  ],
+  "ScriptType": "JSFunction"
+}

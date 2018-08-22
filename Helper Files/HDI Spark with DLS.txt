@@ -1,0 +1,26 @@
+	
+
+
+	from pyspark.sql.types import *
+
+	hvacText = sc.textFile("adl://MYDATALAKESTORE.azuredatalakestore.net/cluster/mysparkcluster/HdiSamples/HdiSamples/SensorSampleData/hvac/HVAC.csv")
+
+	hvacSchema = StructType(
+		[
+			StructField("date", StringType(), False),
+			StructField("time", StringType(), False),
+			StructField("targettemp", IntegerType(), False),
+			StructField("actualtemp", IntegerType(), False),
+			StructField("buildingID", StringType(), False)
+		])
+
+	hvac = hvacText.map(lambda s: s.split(",")).filter(lambda s: s[0] != "Date").map(lambda s:(str(s[0]), str(s[1]), int(s[2]), int(s[3]), str(s[6]) ))
+
+	hvacdf = sqlContext.createDataFrame(hvac,hvacSchema)
+
+	hvacdf.registerTempTable("hvac")
+
+	%%sql
+
+	SELECT buildingID, (targettemp - actualtemp) AS temp_diff, date FROM hvac WHERE date = \"6/1/13\"
+

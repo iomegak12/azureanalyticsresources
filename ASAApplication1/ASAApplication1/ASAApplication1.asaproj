@@ -1,0 +1,36 @@
+﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>0d9ff6a4-2d67-4b56-981e-ef6dc490b096</ProjectGuid>
+    <OutputType>File</OutputType>
+    <AssemblyName>ASAApplication1</AssemblyName>
+    <ASATargetsFilePath>$(AppData)\Microsoft\DataLake\MsBuild\1.0\StreamAnalytics.targets</ASATargetsFilePath>
+    <Name>ASAApplication1</Name>
+    <RootNamespace>ASAApplication1</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>false</DebugSymbols>
+    <OutputPath>bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Configure Include="JSFunction1.js">
+      <SubType>JSFunctionCode</SubType>
+    </Configure>
+    <Configure Include="JSFunction1.js.json">
+      <SubType>JSFunctionConfig</SubType>
+      <DependentUpon>JSFunction1.js</DependentUpon>
+    </Configure>
+    <Configure Include="LocalInput1.json">
+      <SubType>InputMock</SubType>
+    </Configure>
+  </ItemGroup>
+  <ItemGroup>
+    <Script Include="Script1.asaql" />
+  </ItemGroup>
+  <Import Project="$(ASATargetsFilePath)" />
+</Project>

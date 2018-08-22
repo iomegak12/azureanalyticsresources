@@ -1,0 +1,202 @@
+
+
+	. Create Spark Cluster using Portal
+	
+	. Using Jupyter Notebooks
+	
+			Session 1: Magics
+			
+				%%help
+				%%info
+				%%sql
+				%%configure
+				%%logs
+				
+							
+	
+			Session 1.1: Read and Write from WASB(s)
+			
+			textLines = spark.sparkContext.textFile('wasb:///example/data/gutenberg/ulysses.txt')
+			seqFile = spark.sparkContext.sequenceFile('wasb:///example/data/people.seq')
+			parquetFile = spark.read.parquet('wasb:///example/data/people.parquet')
+			jsonFile = spark.read.json('wasb:///example/data/people.json')
+			csvFile = spark.read.csv('wasb:///HdiSamples/HdiSamples/SensorSampleData/hvac/HVAC.csv', header=True, inferSchema=True)
+			
+			textLines.saveAsTextFile('wasb:///example/data/gutenberg/ulysses2py.txt')
+			parquetRDD = parquetFile.rdd
+			parquetRDD.saveAsTextFile('wasb:///example/data/peoplepy.txt')
+			
+			parquetFile.write.json('wasb:///example/data/people3py.json')
+			csvFile.write.parquet('wasb:///example/data/people3py.parquet')
+			jsonFile.write.csv('wasb:///example/data/people3py.csv')	
+			seqFile.saveAsSequenceFile('wasb:///example/data/people2py.seq')
+			
+			
+			
+			
+			Session 1.2: Essential Data Processing Features in Spark
+			
+			%%sql
+			SHOW TABLES
+
+			fruits = spark.sparkContext.textFile('wasb:///example/data/fruits.txt')
+			yellowThings = spark.sparkContext.textFile('wasb:///example/data/yellowthings.txt')
+
+			fruitsReversed = fruits.map(lambda fruit: fruit[::-1])
+
+			fruitsAndYellowThings = fruits.union(yellowThings)
+
+			fruitsArray = fruits.collect()
+			fruitsArray
+
+			numFruits = fruits.count()
+			numFruits
+
+			first3Fruits = fruits.take(3)
+			first3Fruits
+
+			df = spark.read.csv('wasb:///HdiSamples/HdiSamples/SensorSampleData/building/building.csv', header=True, inferSchema=True)
+
+			df.show()
+
+			df.printSchema()
+
+			dfrdd = df.rdd
+			dfrdd.take(3)
+
+			df.select('BuildingID', 'Country').limit(3).show()
+
+			df.groupBy('HVACProduct').count().select('HVACProduct', 'count').show()
+
+			df.registerTempTable('HVAC')
+
+			%%sql
+			SELECT * FROM HVAC WHERE BuildingAge >= 10
+
+			%%sql 
+			SELECT BuildingID, Country FROM HVAC LIMIT 3
+			
+			
+			
+			
+	
+			Session 2: Load Data and Run Queries on an Spark Cluster
+			
+			from pyspark.sql import *
+			from pyspark.sql.types import *
+			
+			# Create an RDD from sample data
+			csvFile = spark.read.csv('wasb:///HdiSamples/HdiSamples/SensorSampleData/hvac/HVAC.csv', header=True, inferSchema=True)
+			csvFile.write.saveAsTable("hvac")
+			
+			%%sql
+			SELECT buildingID, (targettemp - actualtemp) AS temp_diff, date FROM hvac WHERE date = \"6/1/13\"
+						
+						
+						
+						
+			Session 3: Analyze Spark data using Power BI in HDInsight
+			
+			
+			
+			
+			
+			Session 4: Working with Hive tables using Spark
+			
+			%%sql
+			SHOW TABLES
+			
+			%%sql -q -m sample -r 0.1 -n 500 -o query2 
+			SELECT * FROM hivesampletable
+			
+			%%local  
+			print(len(query2))
+			
+			hivesampletabledf = spark.table('hivesampletable')
+			
+			hivesampletablequerydf = spark.sql("""
+				SELECT clientid, querytime, deviceplatform, querydwelltime 
+				FROM hivesampletable 
+				WHERE state = 'Washington' AND devicemake = 'Microsoft' AND querydwelltime > 15
+				""")
+				
+			hivesampletablequerydf.show()
+			
+			%%sql -q
+			CREATE TABLE IF NOT EXISTS hivesampletablecopypy ( 
+                    clientid string, 
+                    querytime string, 
+                    market string, 
+                    deviceplatform string,
+                    devicemake string,
+                    devicemodel string,
+                    state string, 
+                    country string,
+                    querydwelltime double,
+                    sessionid bigint,
+                    sessionpagevieworder bigint )
+					
+			from pyspark.sql import DataFrameWriter
+
+			dfw = DataFrameWriter(hivesampletabledf)
+			dfw.insertInto('hivesampletablecopypy', overwrite=True)
+			
+			
+			
+			
+			
+			Session 5: Analyzing Website Logs in Spark Cluster
+			
+			from pyspark.sql import Row
+			from pyspark.sql.types import *
+
+			logs = sc.textFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/SampleLog/909f2b.log')
+
+			logs.take(5)
+
+			sc.addPyFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/iislogparser.py')
+
+			def parse_line(l):
+				import iislogparser
+				return iislogparser.parse_log_line(l)
+
+			logLines = logs.map(parse_line).filter(lambda p: p is not None).cache()
+
+			logLines.take(2)
+			
+			errors = logLines.filter(lambda p: p.is_error())
+			numLines = logLines.count()
+			numErrors = errors.count()
+			print 'There are', numErrors, 'errors and', numLines, 'log entries'
+			errors.map(lambda p: str(p)).saveAsTextFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/SampleLog/909f2b-2.log')
+			
+			def avgTimeTakenByKey(rdd):
+				return rdd.combineByKey(lambda line: (line.time_taken, 1),
+										lambda x, line: (x[0] + line.time_taken, x[1] + 1),
+										lambda x, y: (x[0] + y[0], x[1] + y[1]))\
+					.map(lambda x: (x[0], float(x[1][0]) / float(x[1][1])))
+				
+			avgTimeTakenByKey(logLines.map(lambda p: (p.cs_uri_stem, p))).top(25, lambda x: x[1])
+			
+			avgTimeTakenByMinute = avgTimeTakenByKey(logLines.map(lambda p: (p.datetime.minute, p))).sortByKey()
+			
+			schema = StructType([StructField('Minutes', IntegerType(), True),
+                     StructField('Time', FloatType(), True)])
+					 
+			avgTimeTakenByMinuteDF = spark.createDataFrame(avgTimeTakenByMinute, schema)
+			
+			avgTimeTakenByMinuteDF.registerTempTable('AverageTime')
+			
+			%%sql -o averagetime
+			SELECT * FROM AverageTime
+
+			%%local
+			%matplotlib inline
+			import matplotlib.pyplot as plt
+
+			plt.plot(averagetime['Minutes'], averagetime['Time'], marker='o', linestyle='--')
+			plt.xlabel('Time (min)')
+			plt.ylabel('Average time taken for request (ms)')
+			
+			
+			

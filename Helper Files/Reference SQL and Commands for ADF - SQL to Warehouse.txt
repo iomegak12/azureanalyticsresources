@@ -1,13 +1,10 @@
 SELECT * FROM [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]
 
-
 TRUNCATE TABLE [@{item().TABLE_SCHEMA}].[@{item().TABLE_NAME}]
-
 
 SELECT TABLE_SCHEMA, TABLE_NAME FROM information_schema.TABLES 
 WHERE TABLE_TYPE = 'BASE TABLE' and 
 	TABLE_SCHEMA = 'SalesLT' and 
 	TABLE_NAME <> 'ProductModel'
-
 
 @activity('LookupTableList').output.value

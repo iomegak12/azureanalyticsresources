@@ -1,0 +1,7 @@
+﻿WITH subquery AS (
+    SELECT  height, weight, udf.predictWeight(height, weight) as predictions
+    FROM Input
+)
+
+SELECT height, weight, predictions
+FROM subquery

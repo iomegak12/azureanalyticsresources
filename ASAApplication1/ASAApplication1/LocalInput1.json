@@ -1,0 +1,8 @@
+﻿{
+  "InputAlias": "Input",
+  "Type": "Data Stream",
+  "Format": "Csv",
+  "FilePath": "C:\\000 - Azure Data Analytics\\Demonstrations\\height-weight.csv",
+  "Sample": "height,weight",
+  "ScriptType": "InputMock"
+}
