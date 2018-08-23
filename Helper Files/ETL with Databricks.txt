@@ -1,0 +1,50 @@
+spark.conf.set("fs.azure.account.key.<ACCOUNT_NAME>.dfs.core.windows.net", "<ACCOUNT_KEY>") 
+spark.conf.set("fs.azure.createRemoteFileSystemDuringInitialization", "true")
+dbutils.fs.ls("abfs://<FILE_SYSTEM_NAME>@<ACCOUNT_NAME>.dfs.core.windows.net/")
+spark.conf.set("fs.azure.createRemoteFileSystemDuringInitialization", "false") 
+
+dbutils.widgets.text("storage_account_name", "STORAGE_ACCOUNT_NAME", "<YOUR_STORAGE_ACCOUNT_NAME>")
+dbutils.widgets.text("storage_account_access_key", "YOUR_ACCESS_KEY", "<YOUR_STORAGE_ACCOUNT_SHARED_KEY>")
+
+val df = spark.read.json("abfs://<FILE_SYSTEM_NAME>@<ACCOUNT_NAME>.dfs.core.windows.net/data/small_radio_json.json")
+
+df.show()
+
+val specificColumnsDf = df.select("firstname", "lastname", "gender", "location", "level")
+
+val renamedColumnsDF = specificColumnsDf.withColumnRenamed("level", "subscription_type")
+renamedColumnsDF.show()
+
+val storageURI = "<STORAGE_ACCOUNT_NAME>.dfs.core.windows.net"
+val fileSystemName = "<FILE_SYSTEM_NAME>"
+val accessKey =  "<ACCESS_KEY>"
+
+val tempDir = "abfs://" + fileSystemName + "@" + storageURI +"/tempDirs"
+
+val acntInfo = "fs.azure.account.key."+ storageURI
+sc.hadoopConfiguration.set(acntInfo, accessKey)
+
+//SQL Data Warehouse related settings
+val dwDatabase = "<DATABASE NAME>"
+val dwServer = "<DATABASE SERVER NAME>" 
+val dwUser = "<USER NAME>"
+val dwPass = "<PASSWORD>"
+val dwJdbcPort =  "1433"
+val dwJdbcExtraOptions = "encrypt=true;trustServerCertificate=true;hostNameInCertificate=*.database.windows.net;loginTimeout=30;"
+val sqlDwUrl = "jdbc:sqlserver://" + dwServer + ".database.windows.net:" + dwJdbcPort + ";database=" + dwDatabase + ";user=" + dwUser+";password=" + dwPass + ";$dwJdbcExtraOptions"
+val sqlDwUrlSmall = "jdbc:sqlserver://" + dwServer + ".database.windows.net:" + dwJdbcPort + ";database=" + dwDatabase + ";user=" + dwUser+";password=" + dwPass
+
+spark.conf.set(
+    "spark.sql.parquet.writeLegacyFormat",
+    "true")
+
+renamedColumnsDF.write
+    .format("com.databricks.spark.sqldw")
+    .option("url", sqlDwUrlSmall) 
+    .option("dbtable", "SampleTable")
+    .option( "forward_spark_azure_storage_credentials","True")
+    .option("tempdir", tempDir)
+    .mode("overwrite")
+    .save()
+	
+	

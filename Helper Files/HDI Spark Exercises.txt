@@ -39,42 +39,42 @@
 			%%sql
 			SHOW TABLES
 
-			fruits = spark.sparkContext.textFile('wasb:///example/data/fruits.txt')
-			yellowThings = spark.sparkContext.textFile('wasb:///example/data/yellowthings.txt')
+fruits = spark.sparkContext.textFile('wasb:///example/data/fruits.txt')
+yellowThings = spark.sparkContext.textFile('wasb:///example/data/yellowthings.txt')
 
-			fruitsReversed = fruits.map(lambda fruit: fruit[::-1])
+fruitsReversed = fruits.map(lambda fruit: fruit[::-1])
 
-			fruitsAndYellowThings = fruits.union(yellowThings)
+fruitsAndYellowThings = fruits.union(yellowThings)
 
-			fruitsArray = fruits.collect()
-			fruitsArray
+fruitsArray = fruits.collect()
+fruitsArray
 
-			numFruits = fruits.count()
-			numFruits
+numFruits = fruits.count()
+numFruits
 
-			first3Fruits = fruits.take(3)
-			first3Fruits
+first3Fruits = fruits.take(3)
+first3Fruits
 
-			df = spark.read.csv('wasb:///HdiSamples/HdiSamples/SensorSampleData/building/building.csv', header=True, inferSchema=True)
+df = spark.read.csv('wasb:///HdiSamples/HdiSamples/SensorSampleData/building/building.csv', header=True, inferSchema=True)
 
-			df.show()
+df.show()
 
-			df.printSchema()
+df.printSchema()
 
-			dfrdd = df.rdd
-			dfrdd.take(3)
+dfrdd = df.rdd
+dfrdd.take(3)
 
-			df.select('BuildingID', 'Country').limit(3).show()
+df.select('BuildingID', 'Country').limit(3).show()
 
-			df.groupBy('HVACProduct').count().select('HVACProduct', 'count').show()
+df.groupBy('HVACProduct').count().select('HVACProduct', 'count').show()
 
-			df.registerTempTable('HVAC')
+df.registerTempTable('HVAC')
 
-			%%sql
-			SELECT * FROM HVAC WHERE BuildingAge >= 10
+%%sql
+SELECT * FROM HVAC WHERE BuildingAge >= 10
 
-			%%sql 
-			SELECT BuildingID, Country FROM HVAC LIMIT 3
+%%sql 
+SELECT BuildingID, Country FROM HVAC LIMIT 3
 			
 			
 			
@@ -84,14 +84,14 @@
 			
 			from pyspark.sql import *
 			from pyspark.sql.types import *
+
+# Create an RDD from sample data
+csvFile = spark.read.csv('wasb:///HdiSamples/HdiSamples/SensorSampleData/hvac/HVAC.csv', header=True, inferSchema=True)
+csvFile.write.saveAsTable("hvac")
+
+%%sql
+SELECT buildingID, (targettemp - actualtemp) AS temp_diff, date FROM hvac WHERE date = \"6/1/13\"
 			
-			# Create an RDD from sample data
-			csvFile = spark.read.csv('wasb:///HdiSamples/HdiSamples/SensorSampleData/hvac/HVAC.csv', header=True, inferSchema=True)
-			csvFile.write.saveAsTable("hvac")
-			
-			%%sql
-			SELECT buildingID, (targettemp - actualtemp) AS temp_diff, date FROM hvac WHERE date = \"6/1/13\"
-						
 						
 						
 						
@@ -150,53 +150,53 @@
 			from pyspark.sql import Row
 			from pyspark.sql.types import *
 
-			logs = sc.textFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/SampleLog/909f2b.log')
+logs = sc.textFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/SampleLog/909f2b.log')
 
-			logs.take(5)
+logs.take(5)
 
-			sc.addPyFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/iislogparser.py')
+sc.addPyFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/iislogparser.py')
 
-			def parse_line(l):
-				import iislogparser
-				return iislogparser.parse_log_line(l)
+def parse_line(l):
+	import iislogparser
+	return iislogparser.parse_log_line(l)
 
-			logLines = logs.map(parse_line).filter(lambda p: p is not None).cache()
+logLines = logs.map(parse_line).filter(lambda p: p is not None).cache()
 
-			logLines.take(2)
-			
-			errors = logLines.filter(lambda p: p.is_error())
-			numLines = logLines.count()
-			numErrors = errors.count()
-			print 'There are', numErrors, 'errors and', numLines, 'log entries'
-			errors.map(lambda p: str(p)).saveAsTextFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/SampleLog/909f2b-2.log')
-			
-			def avgTimeTakenByKey(rdd):
-				return rdd.combineByKey(lambda line: (line.time_taken, 1),
-										lambda x, line: (x[0] + line.time_taken, x[1] + 1),
-										lambda x, y: (x[0] + y[0], x[1] + y[1]))\
-					.map(lambda x: (x[0], float(x[1][0]) / float(x[1][1])))
-				
-			avgTimeTakenByKey(logLines.map(lambda p: (p.cs_uri_stem, p))).top(25, lambda x: x[1])
-			
-			avgTimeTakenByMinute = avgTimeTakenByKey(logLines.map(lambda p: (p.datetime.minute, p))).sortByKey()
-			
-			schema = StructType([StructField('Minutes', IntegerType(), True),
-                     StructField('Time', FloatType(), True)])
-					 
-			avgTimeTakenByMinuteDF = spark.createDataFrame(avgTimeTakenByMinute, schema)
-			
-			avgTimeTakenByMinuteDF.registerTempTable('AverageTime')
-			
-			%%sql -o averagetime
-			SELECT * FROM AverageTime
+logLines.take(2)
 
-			%%local
-			%matplotlib inline
-			import matplotlib.pyplot as plt
+errors = logLines.filter(lambda p: p.is_error())
+numLines = logLines.count()
+numErrors = errors.count()
+print 'There are', numErrors, 'errors and', numLines, 'log entries'
+errors.map(lambda p: str(p)).saveAsTextFile('wasb:///HdiSamples/HdiSamples/WebsiteLogSampleData/SampleLog/909f2b-2.log')
 
-			plt.plot(averagetime['Minutes'], averagetime['Time'], marker='o', linestyle='--')
-			plt.xlabel('Time (min)')
-			plt.ylabel('Average time taken for request (ms)')
+def avgTimeTakenByKey(rdd):
+	return rdd.combineByKey(lambda line: (line.time_taken, 1),
+							lambda x, line: (x[0] + line.time_taken, x[1] + 1),
+							lambda x, y: (x[0] + y[0], x[1] + y[1]))\
+		.map(lambda x: (x[0], float(x[1][0]) / float(x[1][1])))
+	
+avgTimeTakenByKey(logLines.map(lambda p: (p.cs_uri_stem, p))).top(25, lambda x: x[1])
+
+avgTimeTakenByMinute = avgTimeTakenByKey(logLines.map(lambda p: (p.datetime.minute, p))).sortByKey()
+
+schema = StructType([StructField('Minutes', IntegerType(), True),
+		 StructField('Time', FloatType(), True)])
+		 
+avgTimeTakenByMinuteDF = spark.createDataFrame(avgTimeTakenByMinute, schema)
+
+avgTimeTakenByMinuteDF.registerTempTable('AverageTime')
+
+%%sql -o averagetime
+SELECT * FROM AverageTime
+
+%%local
+%matplotlib inline
+import matplotlib.pyplot as plt
+
+plt.plot(averagetime['Minutes'], averagetime['Time'], marker='o', linestyle='--')
+plt.xlabel('Time (min)')
+plt.ylabel('Average time taken for request (ms)')
 			
 			
 			

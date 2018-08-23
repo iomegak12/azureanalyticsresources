@@ -1,0 +1,22 @@
+spark.conf.set("fs.azure.account.key.iomegastorage.blob.core.windows.net", "QSTd8gP9qoDSPxc4UbiPzIG/JBDHQBZpND4dU6E2jmnfmcJ7idgst3Ijyr5W+6ksZOiEdWJK/5zS1QrBqlNzDw==") 
+spark.conf.set("fs.azure.createRemoteFileSystemDuringInitialization", "true")
+dbutils.fs.ls("wasbs://data@iomegastorage.blob.core.windows.net/")
+spark.conf.set("fs.azure.createRemoteFileSystemDuringInitialization", "false")
+
+%sh wget -P /tmp https://raw.githubusercontent.com/Azure/usql/master/Examples/Samples/Data/json/radiowebsite/small_radio_json.json
+
+dbutils.fs.cp("file:///tmp/small_radio_json.json", "wasbs://data@iomegastorage.blob.core.windows.net/")
+
+%sql
+DROP TABLE IF EXISTS radio_sample_data;
+CREATE TABLE radio_sample_data
+USING json
+OPTIONS (
+ path  "wasbs://data@iomegastorage.blob.core.windows.net/small_radio_json.json"
+)
+
+
+%sql 
+SELECT * from radio_sample_data
+
+

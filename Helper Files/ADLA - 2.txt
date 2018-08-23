@@ -1,0 +1,158 @@
+
+
+
+
+
+
+
+@searchlog =
+    EXTRACT UserId int,
+            Start DateTime,
+            Region string,
+            Query string,
+            Duration int?,
+            Urls string,
+            ClickedUrls string
+    FROM "/Samples/Data/SearchLog.tsv"
+    USING Extractors.Tsv();
+
+@rs1 =
+    SELECT Start,
+           Region,
+           Duration
+    FROM @searchlog
+    WHERE Region == "en-gb";
+
+@rs1 =
+    SELECT Start,
+           Region,
+           Duration
+    FROM @rs1
+    WHERE Start >= DateTime.Parse("2012/02/16") AND Start <= DateTime.Parse("2012/02/17");
+
+OUTPUT @rs1
+TO "/output/SearchLogResult2.csv"
+USING Outputters.Csv();
+
+
+
+
+
+
+DECLARE @outpref string = "/output/SearchLog3";
+DECLARE @out1 string = @outpref + "_agg.csv";
+DECLARE @out2 string = @outpref + "_top5agg.csv";
+DECLARE @out3 string = @outpref + "havingcondition.csv";
+
+
+@searchlog =
+    EXTRACT UserId int,
+            Start DateTime,
+            Region string,
+            Query string,
+            Duration int?,
+            Urls string,
+            ClickedUrls string
+    FROM "/Samples/Data/SearchLog.tsv"
+    USING Extractors.Tsv();
+
+@rs1 =
+    SELECT Region,
+           SUM(Duration) AS TotalDuration
+    FROM @searchlog
+    GROUP BY Region;
+
+@res =
+    SELECT *
+    FROM @rs1
+    ORDER BY TotalDuration DESC
+    FETCH 5 ROWS;
+
+OUTPUT @rs1
+TO @out1
+ORDER BY TotalDuration DESC
+USING Outputters.Csv();
+OUTPUT @res
+TO @out2
+ORDER BY TotalDuration DESC
+USING Outputters.Csv();
+
+@res2 =
+    SELECT Region,
+           SUM(Duration) AS TotalDuration
+    FROM @searchlog
+    GROUP BY Region
+    HAVING SUM(Duration) > 200;
+
+OUTPUT @res2
+TO @out3
+ORDER BY TotalDuration DESC
+USING Outputters.Csv();
+
+
+
+
+
+DROP DATABASE IF EXISTS SearchLogDemo;
+CREATE DATABASE SearchLogDemo;
+USE DATABASE SearchLogDemo;
+
+DROP TABLE IF EXISTS SearchLog1;
+DROP TABLE IF EXISTS SearchLog2;
+
+CREATE TABLE SearchLog
+(
+    UserId int,
+    Start DateTime,
+    Region string,
+    Query string,
+    Duration int?,
+    Urls string,
+    ClickedUrls string,
+
+    INDEX sl_idx
+    CLUSTERED(UserId ASC)
+    DISTRIBUTED BY
+    HASH(UserId)
+);
+
+@searchlog =
+    EXTRACT UserId int,
+            Start DateTime,
+            Region string,
+            Query string,
+            Duration int?,
+            Urls string,
+            ClickedUrls string
+    FROM @"/Samples/Data/SearchLog.tsv"
+    USING Extractors.Tsv();
+
+INSERT INTO SearchLog
+SELECT *
+FROM @searchlog;
+
+
+
+
+
+
+
+
+
+@rs1 =
+    SELECT Region,
+           SUM(Duration) AS TotalDuration
+    FROM SearchLogDemo.dbo.SearchLog
+    GROUP BY Region;
+
+@res =
+    SELECT *
+    FROM @rs1
+    ORDER BY TotalDuration DESC
+    FETCH 5 ROWS;
+
+OUTPUT @res
+TO "/output/SearchLogResult5.csv"
+ORDER BY TotalDuration DESC
+USING Outputters.Csv();
+  

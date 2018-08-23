@@ -1,0 +1,36 @@
+REFERENCE ASSEMBLY [ExtR];
+DEPLOY RESOURCE @"/magrittr_1.5.zip";
+
+DECLARE @IrisData string =  @"/usqlext/samples/R/iris.csv";
+DECLARE @OutputFileModelSummary string = @"/R/Output/CustomePackages.txt";
+
+// R script to run
+DECLARE @myRScript = @"
+# install the magrittr package,
+install.packages('magrittr_1.5.zip', repos = NULL),
+# load the magrittr package,
+require(magrittr),
+# demonstrate use of the magrittr package,
+2 %>% sqrt
+";
+
+@InputData =
+EXTRACT SepalLength double,
+SepalWidth double,
+PetalLength double,
+PetalWidth double,
+Species string
+FROM @IrisData
+USING Extractors.Csv();
+
+@ExtendedData =
+SELECT 0 AS Par,
+*
+FROM @InputData;
+
+@RScriptOutput = REDUCE @ExtendedData ON Par
+PRODUCE Par, RowId int, ROutput string
+READONLY Par
+USING new Extension.R.Reducer(command:@myRScript, rReturnType:"charactermatrix");
+
+OUTPUT @RScriptOutput TO @OutputFileModelSummary USING Outputters.Tsv();

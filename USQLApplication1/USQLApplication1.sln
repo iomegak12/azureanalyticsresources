@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{182E2583-ECAD-465B-BB50-91101D7C24CE}") = "USQLApplication1", "USQLApplication1\USQLApplication1.usqlproj", "{D4077104-44D6-4174-B6A5-0C99F92B3F75}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Debug|x64.ActiveCfg = Debug|x64
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Debug|x64.Build.0 = Debug|x64
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Debug|x86.ActiveCfg = Debug|x86
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Debug|x86.Build.0 = Debug|x86
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Release|x64.ActiveCfg = Release|x64
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Release|x64.Build.0 = Release|x64
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Release|x86.ActiveCfg = Release|x86
+		{D4077104-44D6-4174-B6A5-0C99F92B3F75}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {377DE57F-9094-4DC2-B5ED-750E566C67F3}
+	EndGlobalSection
+EndGlobal
